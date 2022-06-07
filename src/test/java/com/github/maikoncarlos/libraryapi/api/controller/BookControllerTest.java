@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @WebMvcTest
 @AutoConfigureMockMvc
-public class BookControllerTest {
+class BookControllerTest {
 
     static String BOOK_API = "/api/books";
 
@@ -39,13 +39,13 @@ public class BookControllerTest {
 
     @Test
     @DisplayName(" Criando um Book com sucesso ")
-    public void createBookTest() throws Exception {
+     void createBookTest() throws Exception {
 
-        BookDTO bookDTO = BookDTO.builder().title("title").author("author").isbn("isbn").build();
-        Book saveBook = Book.builder().id(1L).title("title").author("author").isbn("isbn").build();
+        BookDTO dto = BookDTO.builder().title("title").author("author").isbn("isbn").build();
+        Book saveBook = Book.builder().id(10L).title("title").author("author").isbn("isbn").build();
 
+        String json = new ObjectMapper().writeValueAsString(dto);
         BDDMockito.given(bookService.save(Mockito.any(Book.class))).willReturn(saveBook);
-        String json = new ObjectMapper().writeValueAsString(bookDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(BOOK_API)
@@ -56,16 +56,15 @@ public class BookControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isCreated())
-                .andExpect( jsonPath("id").isNotEmpty())
-                .andExpect(jsonPath("title").value(bookDTO.getTitle()))
-                .andExpect(jsonPath("author").value(bookDTO.getAuthor()))
-                .andExpect(jsonPath("isbn").value(bookDTO.getIsbn()));
+                .andExpect(jsonPath("id").value(10L))
+                .andExpect(jsonPath("title").value(dto.getTitle()))
+                .andExpect(jsonPath("author").value(dto.getAuthor()))
+                .andExpect(jsonPath("isbn").value(dto.getIsbn()));
 
     }
 
     @Test
     @DisplayName(" Erro ao tentar criar um Book por ter dados inválidos na requisição")
-    public void invalidToCreateBookTest() {
-
+    void invalidToCreateBookTest() {
     }
 }

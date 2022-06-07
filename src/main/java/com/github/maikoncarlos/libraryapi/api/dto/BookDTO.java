@@ -3,7 +3,7 @@ package com.github.maikoncarlos.libraryapi.api.dto;
 import lombok.*;
 
 @Data
-@Builder
+@Builder()
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookDTO {
