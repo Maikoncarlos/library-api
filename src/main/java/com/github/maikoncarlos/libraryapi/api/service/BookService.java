@@ -1,7 +1,7 @@
 package com.github.maikoncarlos.libraryapi.api.service;
 
-import com.github.maikoncarlos.libraryapi.api.entity.Book;
+import com.github.maikoncarlos.libraryapi.api.dto.BookDTO;
 
 public interface BookService {
-    Book save(Book book);
+    BookDTO save(BookDTO bookDTO);
 }
