@@ -4,11 +4,12 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
-@Builder()
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookDTO {
+public class BookDto {
 
     @NotBlank
     private String title;

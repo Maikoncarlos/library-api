@@ -1,7 +1,10 @@
 package com.github.maikoncarlos.libraryapi.api.service;
 
-import com.github.maikoncarlos.libraryapi.api.dto.BookDTO;
+import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
+
+import javax.validation.Valid;
 
 public interface BookService {
-    BookDTO save(BookDTO bookDTO);
+
+    BookDto save(@Valid BookDto bookDTO);
 }

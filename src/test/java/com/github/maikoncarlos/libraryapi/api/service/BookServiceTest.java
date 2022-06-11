@@ -1,6 +1,6 @@
 package com.github.maikoncarlos.libraryapi.api.service;
 
-import com.github.maikoncarlos.libraryapi.api.dto.BookDTO;
+import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
 import com.github.maikoncarlos.libraryapi.api.entity.Book;
 import com.github.maikoncarlos.libraryapi.api.repositories.BookRepository;
 import com.github.maikoncarlos.libraryapi.api.service.impl.BookServiceImpl;
@@ -38,7 +38,7 @@ class BookServiceTest {
                 (Book.builder().author("author").title("title").isbn("isbn").build());
 
         //execução
-        BookDTO save = service.save(createNewBookDTO());
+        BookDto save = service.save(createNewBookDTO());
 
         //verificação
        // assertThat(save.getId()).isNotNull();
@@ -47,7 +47,7 @@ class BookServiceTest {
         assertThat(save.getIsbn()).isEqualTo("isbn");
     }
 
-    private BookDTO createNewBookDTO() {
-        return BookDTO.builder().title("title").author("author").isbn("isbn").build();
+    private BookDto createNewBookDTO() {
+        return com.github.maikoncarlos.libraryapi.api.dto.BookDto.builder().title("title").author("author").isbn("isbn").build();
     }
 }

@@ -1,8 +1,7 @@
 package com.github.maikoncarlos.libraryapi.api.controller;
 
-import com.github.maikoncarlos.libraryapi.api.dto.BookDTO;
+import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
 import com.github.maikoncarlos.libraryapi.api.exceptions.ApiErrors;
-import com.github.maikoncarlos.libraryapi.api.mapper.BookMapper;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import lombok.AllArgsConstructor;
@@ -21,13 +20,13 @@ import javax.validation.Valid;
 public class BookController {
 
     private BookService bookService;
-    private BookMapper bookMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDTO creater(@RequestBody @Valid BookDTO bookDTO) {
+    public BookDto creater(@RequestBody @Valid BookDto bookDTO){
         return bookService.save(bookDTO);
     }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

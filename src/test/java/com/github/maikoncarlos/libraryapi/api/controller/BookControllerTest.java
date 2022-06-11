@@ -1,7 +1,7 @@
 package com.github.maikoncarlos.libraryapi.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.maikoncarlos.libraryapi.api.dto.BookDTO;
+import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
 import com.github.maikoncarlos.libraryapi.api.entity.Book;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
@@ -43,11 +43,11 @@ class BookControllerTest {
     @DisplayName(" Criando um Book com sucesso ")
     void createBookTest() throws Exception {
 
-        BookDTO dto = createNewBookDTO();
+        BookDto dto = createNewBookDTO();
         Book saveBook = Book.builder().title("title").author("author").isbn("isbn").build();
 
         String json = new ObjectMapper().writeValueAsString(dto);
-        BDDMockito.given(service.save(Mockito.any(BookDTO.class))).willReturn(dto);
+        BDDMockito.given(service.save(Mockito.any(BookDto.class))).willReturn(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(BOOK_API)
@@ -69,7 +69,7 @@ class BookControllerTest {
     @DisplayName(" Erro ao tentar criar um Book por ter dados inválidos na requisição")
     void invalidToCreateBookTest() throws Exception {
 
-        String json = new ObjectMapper().writeValueAsString(new BookDTO());
+        String json = new ObjectMapper().writeValueAsString(new BookDto());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(BOOK_API)
@@ -90,7 +90,7 @@ class BookControllerTest {
         createNewBookDTO();
         String json = new ObjectMapper().writeValueAsString(createNewBookDTO());
         String messageError = "Isbn já existente";
-        BDDMockito.given(service.save(Mockito.any(BookDTO.class)))
+        BDDMockito.given(service.save(Mockito.any(BookDto.class)))
                 .willThrow(new BusinessException(messageError));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -105,7 +105,7 @@ class BookControllerTest {
                 .andExpect(jsonPath("errors[0]").value(messageError));
     }
 
-    private BookDTO createNewBookDTO() {
-        return BookDTO.builder().title("title").author("author").isbn("isbn").build();
+    private BookDto createNewBookDTO() {
+        return com.github.maikoncarlos.libraryapi.api.dto.BookDto.builder().title("title").author("author").isbn("isbn").build();
     }
 }
