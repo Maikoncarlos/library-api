@@ -1,28 +1,23 @@
 package com.github.maikoncarlos.libraryapi.api.service.impl;
 
-import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
 import com.github.maikoncarlos.libraryapi.api.entity.Book;
-import com.github.maikoncarlos.libraryapi.api.mapper.BookMapper;
 import com.github.maikoncarlos.libraryapi.api.repositories.BookRepository;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.validation.Valid;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
 
+    @Autowired
     private BookRepository repository;
-    private BookMapper bookMapper;
 
-
-    public BookDto save(@Valid BookDto bookDTO) {
-        Book book = bookMapper.toBook(bookDTO);
-        Book save = repository.save(book);
-        return bookMapper.toBookDTO(save);
+    @Override
+    public Book save(Book book) {
+        return repository.save(book);
     }
 }
