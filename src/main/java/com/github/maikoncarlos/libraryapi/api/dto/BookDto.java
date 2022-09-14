@@ -11,10 +11,11 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class BookDto {
 
-    @NotBlank
+    private Long id;
+    @NotBlank(message = "valor inválido ou em branco")
     private String title;
-    @NotBlank
+    @NotBlank(message = "valor inválido ou em branco")
     private String author;
-    @NotBlank
+    @NotBlank(message = "valor inválido ou em branco")
     private String isbn;
 }

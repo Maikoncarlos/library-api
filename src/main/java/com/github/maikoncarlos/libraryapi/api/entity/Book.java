@@ -24,10 +24,12 @@ public class Book implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "valor inválido ou em branco")
     private String title;
-    @NotBlank
+
+    @NotBlank(message = "valor inválido ou em branco")
     private String author;
-    @NotBlank
+
+    @NotBlank(message = "valor inválido ou em branco")
     private String isbn;
 }
