@@ -90,7 +90,7 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("deve lançar erro 400 quando tentar criar um livro com o isbn já existente da BD")
+    @DisplayName("deve lançar erro 400 quando tentar criar um livro com o isbn já existente por outro livro")
     void createBookWithDuplicationIsbn() throws Exception {
 
         createNewBookDTO();
