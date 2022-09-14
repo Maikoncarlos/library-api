@@ -1,11 +1,14 @@
 package com.github.maikoncarlos.libraryapi.api.controller;
 
 import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
+import com.github.maikoncarlos.libraryapi.api.entity.Book;
 import com.github.maikoncarlos.libraryapi.api.exceptions.ApiErrors;
+import com.github.maikoncarlos.libraryapi.api.mapper.BookMapper;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,12 +22,18 @@ import javax.validation.Valid;
 @RequestMapping("/api/books")
 public class BookController {
 
+    @Autowired
     private BookService bookService;
+
+    @Autowired
+    private BookMapper bookMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto creater(@RequestBody @Valid BookDto bookDTO){
-        return bookService.save(bookDTO);
+        Book book = bookMapper.toBook(bookDTO);
+        book = bookService.save(book);
+        return bookMapper.toBookDTO(book);
     }
 
 
