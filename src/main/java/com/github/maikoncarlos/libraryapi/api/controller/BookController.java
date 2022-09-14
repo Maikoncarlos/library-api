@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+
 @RestController
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,7 +31,7 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDto creater(@RequestBody @Valid BookDto bookDTO){
+    public BookDto creater(@RequestBody @Valid BookDto bookDTO) {
         Book book = bookMapper.toBook(bookDTO);
         book = bookService.save(book);
         return bookMapper.toBookDTO(book);

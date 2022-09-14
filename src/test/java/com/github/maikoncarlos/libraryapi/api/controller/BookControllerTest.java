@@ -48,7 +48,7 @@ class BookControllerTest {
     void createBookTest() throws Exception {
 
         BookDto dto = createNewBookDTO();
-        Book saveBook = Book.builder().id(10L).title("title").author("author").isbn("isbn").build();
+        Book saveBook = Book.builder().id(1L).title("title").author("author").isbn("isbn").build();
 
         BDDMockito.given(service.save(Mockito.any(Book.class))).willReturn(saveBook);
         String json = new ObjectMapper().writeValueAsString(dto);
@@ -63,7 +63,7 @@ class BookControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(10L))
+                .andExpect(jsonPath("id").value(1L))
                 .andExpect(jsonPath("title").value(dto.getTitle()))
                 .andExpect(jsonPath("author").value(dto.getAuthor()))
                 .andExpect(jsonPath("isbn").value(dto.getIsbn()));
@@ -71,11 +71,10 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("deve lançar erro 400 ao tentar criar um livro por ter dados inválidos na requisição")
+    @DisplayName("deve lançar erro 400 ao tentar criar um livro por ter dados inválidos na requisição ou falta de dados obrigatórios")
     void invalidToCreateBookTest() throws Exception {
 
-        BookDto dto = createNewBookDTOWithInvalidsValues();
-        String json = new ObjectMapper().writeValueAsString(dto);
+        String json = new ObjectMapper().writeValueAsString(new BookDto());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(BOOK_API)
@@ -85,7 +84,8 @@ class BookControllerTest {
 
         mockMvc
                 .perform(request)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors" , hasSize(3)));
 
     }
 
@@ -113,7 +113,6 @@ class BookControllerTest {
 
     private BookDto createNewBookDTO() {
         return BookDto.builder()
-                .id(10L)
                 .title("title")
                 .author("author")
                 .isbn("isbn")
@@ -121,10 +120,6 @@ class BookControllerTest {
     }
 
     private BookDto createNewBookDTOWithInvalidsValues() {
-        return BookDto.builder()
-                .title("")
-                .author("author")
-                .isbn("isbn")
-                .build();
+        return BookDto.builder().build();
     }
 }
