@@ -26,28 +26,33 @@ class BookServiceTest {
 
     @BeforeEach
     void setup() {
-        this.service = new BookServiceImpl();
+        this.service = new BookServiceImpl(repository);
     }
 
     @Test
-    @DisplayName("Deve Criar um Livro")
+    @DisplayName("deve criar um livro")
     void savebookTest() {
         //cenário
-        Book book = Book.builder().id(10L).author("author").title("title").isbn("isbn").build();
+        Book book = createNewBook();
+
         Mockito.when(repository.save(book)).thenReturn
-                (Book.builder().author("author").title("title").isbn("isbn").build());
+                (Book.builder().id(1L).author("author").title("title").isbn("isbn").build());
 
         //execução
-        BookDto save = service.save(createNewBookDTO());
+        Book save = service.save(book);
 
         //verificação
-       // assertThat(save.getId()).isNotNull();
+        assertThat(save.getId()).isNotNull();
         assertThat(save.getAuthor()).isEqualTo("author");
         assertThat(save.getTitle()).isEqualTo("title");
         assertThat(save.getIsbn()).isEqualTo("isbn");
     }
 
     private BookDto createNewBookDTO() {
-        return com.github.maikoncarlos.libraryapi.api.dto.BookDto.builder().title("title").author("author").isbn("isbn").build();
+        return BookDto.builder().title("title").author("author").isbn("isbn").build();
+    }
+
+    private Book createNewBook() {
+        return Book.builder().title("title").author("author").isbn("isbn").build();
     }
 }
