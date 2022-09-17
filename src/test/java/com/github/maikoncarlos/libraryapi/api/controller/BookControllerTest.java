@@ -93,8 +93,8 @@ class BookControllerTest {
     @DisplayName("deve lançar erro 400 quando tentar criar um livro com o isbn já existente por outro livro")
     void createBookWithDuplicationIsbn() throws Exception {
 
-        createNewBookDTO();
         String json = new ObjectMapper().writeValueAsString(createNewBookDTO());
+
         String messageError = "Isbn já existente";
         BDDMockito.given(service.save(Mockito.any(Book.class)))
                 .willThrow(new BusinessException(messageError));

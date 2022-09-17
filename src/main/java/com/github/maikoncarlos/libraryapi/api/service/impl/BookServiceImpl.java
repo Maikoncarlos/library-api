@@ -3,6 +3,7 @@ package com.github.maikoncarlos.libraryapi.api.service.impl;
 import com.github.maikoncarlos.libraryapi.api.entity.Book;
 import com.github.maikoncarlos.libraryapi.api.repositories.BookRepository;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
+import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book save(Book book) {
+        if(repository.existsByIsbn(book.getIsbn())){
+            throw new BusinessException("Isbn já existente");
+        }
         return repository.save(book);
     }
 }
