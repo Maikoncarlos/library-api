@@ -45,14 +45,10 @@ class BookControllerTest {
 
     @Test
     @DisplayName("deve criar um livro com sucesso")
-    void createBookTest() throws Exception {
+    void createBookWithSucessTest() throws Exception {
 
-        BookDto dto = createNewBookDTO();
-        Book saveBook = Book.builder().id(1L).title("title").author("author").isbn("isbn").build();
-
-        BDDMockito.given(service.save(Mockito.any(Book.class))).willReturn(saveBook);
-        String json = new ObjectMapper().writeValueAsString(dto);
-
+        BDDMockito.given(service.save(Mockito.any(Book.class))).willReturn(saveBook());
+        String json = new ObjectMapper().writeValueAsString(createNewBookDTO());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(BOOK_API)
@@ -63,10 +59,9 @@ class BookControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(1L))
-                .andExpect(jsonPath("title").value(dto.getTitle()))
-                .andExpect(jsonPath("author").value(dto.getAuthor()))
-                .andExpect(jsonPath("isbn").value(dto.getIsbn()));
+                .andExpect(jsonPath("title").value(saveBook().getTitle()))
+                .andExpect(jsonPath("author").value(saveBook().getAuthor()))
+                .andExpect(jsonPath("isbn").value(saveBook().getIsbn()));
 
     }
 
@@ -74,13 +69,13 @@ class BookControllerTest {
     @DisplayName("deve lançar erro 400 ao tentar criar um livro por ter dados inválidos na requisição ou falta de dados obrigatórios")
     void invalidToCreateBookTest() throws Exception {
 
-        String json = new ObjectMapper().writeValueAsString(new BookDto());
+        String jsonDTO = new ObjectMapper().writeValueAsString(createNewBookDTOWithInvalidsValues());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(BOOK_API)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(json);
+                .content(jsonDTO);
 
         mockMvc
                 .perform(request)
@@ -115,11 +110,18 @@ class BookControllerTest {
         return BookDto.builder()
                 .title("title")
                 .author("author")
-                .isbn("isbn")
-                .build();
+                .isbn("isbn").build();
     }
 
     private BookDto createNewBookDTOWithInvalidsValues() {
         return BookDto.builder().build();
+    }
+
+    private Book saveBook(){
+        return Book.builder()
+                .id(1L)
+                .title("title")
+                .author("author")
+                .isbn("isbn").build();
     }
 }
