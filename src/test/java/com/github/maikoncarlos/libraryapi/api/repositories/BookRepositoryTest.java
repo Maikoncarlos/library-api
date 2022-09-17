@@ -1,5 +1,6 @@
 package com.github.maikoncarlos.libraryapi.api.repositories;
 
+import com.github.maikoncarlos.libraryapi.api.entity.Book;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +28,8 @@ class BookRepositoryTest {
     void returnTrueWhenIsbnExists() {
         //cenário
         String isbn = "isbn";
+        Book book = Book.builder().title("title").author("author").isbn(isbn).build();
+        testEntityManager.persist(book);
 
         //execução
         boolean exists = repository.existsByIsbn(isbn);
