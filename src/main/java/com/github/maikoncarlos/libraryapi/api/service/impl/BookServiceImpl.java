@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Service
@@ -23,5 +25,10 @@ public class BookServiceImpl implements BookService {
             throw new BusinessException("Isbn já existente");
         }
         return repository.save(book);
+    }
+
+    @Override
+    public Optional<Book> getById(Long id) {
+        return Optional.empty();
     }
 }

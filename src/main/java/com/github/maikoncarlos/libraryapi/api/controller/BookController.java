@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
@@ -35,6 +36,13 @@ public class BookController {
         Book book = bookMapper.toBook(bookDTO);
         book = bookService.save(book);
         return bookMapper.toBookDTO(book);
+    }
+
+    @GetMapping("{id}")
+    public BookDto getById(@PathVariable Long id){
+       return bookService.getById(id)
+               .map(book -> bookMapper.toBookDTO(book))
+               .orElseThrow( ()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
 
