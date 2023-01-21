@@ -2,13 +2,13 @@ package com.github.maikoncarlos.libraryapi.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
-import com.github.maikoncarlos.libraryapi.api.entity.Book;
-import com.github.maikoncarlos.libraryapi.api.mapper.BookMapper;
+import com.github.maikoncarlos.libraryapi.api.entity.BookEntity;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -44,14 +44,12 @@ class BookControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
     @MockBean
     BookService service;
-
     @MockBean
-    BookMapper bookMapper;
+    ModelMapper modelMapper;
 
-    private Book book;
+    private BookEntity book;
     private BookDto bookDto;
 
     @Test
@@ -125,17 +123,16 @@ class BookControllerTest {
     void getBookDetailsTest() throws Exception {
         //cenário(given)
         Long id = 1L;
-        Book book = Book.builder()
+        BookEntity book = BookEntity.builder()
                 .id(id)
                 .isbn(createNewBook().getIsbn())
                 .title(createNewBook().getTitle())
                 .author(createNewBook().getAuthor()).build();
 
-        given(service.getById(id)).willReturn(Optional.of(book));
-
+        given(service.getById(anyLong())).willReturn(Optional.of(book));
         //execução(when)
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(BOOK_API.concat("/" + id))
+                .get("/api/books/1")
                 .accept(MediaType.APPLICATION_JSON);
 
         //verificações()
@@ -175,15 +172,15 @@ class BookControllerTest {
         return BookDto.builder().build();
     }
 
-    private Book createNewBook() {
-        return Book.builder()
+    private BookEntity createNewBook() {
+        return BookEntity.builder()
                 .title("title")
                 .author("author")
                 .isbn("isbn").build();
     }
 
-    private Book responseSaveBook() {
-        return Book.builder()
+    private BookEntity responseSaveBook() {
+        return BookEntity.builder()
                 .id(ID)
                 .title(TITLE)
                 .author(AUTHOR)

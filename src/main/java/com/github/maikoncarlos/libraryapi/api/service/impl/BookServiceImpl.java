@@ -1,6 +1,6 @@
 package com.github.maikoncarlos.libraryapi.api.service.impl;
 
-import com.github.maikoncarlos.libraryapi.api.entity.Book;
+import com.github.maikoncarlos.libraryapi.api.entity.BookEntity;
 import com.github.maikoncarlos.libraryapi.api.repositories.BookRepository;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
@@ -20,7 +20,7 @@ public class BookServiceImpl implements BookService {
     private BookRepository repository;
 
     @Override
-    public Book save(Book book) {
+    public BookEntity save(BookEntity book) {
         if(repository.existsByIsbn(book.getIsbn())){
             throw new BusinessException("Isbn já existente");
         }
@@ -28,7 +28,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Optional<Book> getById(Long id) {
+    public Optional<BookEntity> getById(Long id) {
         return Optional.empty();
     }
 }

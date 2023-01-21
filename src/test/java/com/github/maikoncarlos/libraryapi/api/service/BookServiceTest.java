@@ -1,14 +1,12 @@
 package com.github.maikoncarlos.libraryapi.api.service;
 
 import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
-import com.github.maikoncarlos.libraryapi.api.entity.Book;
+import com.github.maikoncarlos.libraryapi.api.entity.BookEntity;
 import com.github.maikoncarlos.libraryapi.api.repositories.BookRepository;
 import com.github.maikoncarlos.libraryapi.api.service.impl.BookServiceImpl;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,13 +33,13 @@ class BookServiceTest {
     @DisplayName("deve criar um livro")
     void savebookTest() {
         //cenário
-        Book book = createNewBook();
+        BookEntity book = createNewBook();
         Mockito.when(repository.existsByIsbn(Mockito.anyString())).thenReturn(false);
         Mockito.when(repository.save(book)).thenReturn
-                (Book.builder().id(1L).author("author").title("title").isbn("isbn").build());
+                (BookEntity.builder().id(1L).author("author").title("title").isbn("isbn").build());
 
         //execução
-        Book save = service.save(book);
+        BookEntity save = service.save(book);
 
         //verificação
         assertThat(save.getId()).isNotNull();
@@ -54,7 +52,7 @@ class BookServiceTest {
     @DisplayName("deve lançar erro de negocio ao tentar salvar um livro com isbn que já exista")
     void shouldNotSaveAsBookwithDuplicateISBN() {
         //cenário
-        Book book = createNewBook();
+        BookEntity book = createNewBook();
         Mockito.when(repository.existsByIsbn(Mockito.anyString())).thenReturn(true);
 
         //execução
@@ -73,7 +71,7 @@ class BookServiceTest {
         return BookDto.builder().title("title").author("author").isbn("isbn").build();
     }
 
-    private Book createNewBook() {
-        return Book.builder().title("title").author("author").isbn("isbn").build();
+    private BookEntity createNewBook() {
+        return BookEntity.builder().title("title").author("author").isbn("isbn").build();
     }
 }

@@ -1,12 +1,12 @@
 package com.github.maikoncarlos.libraryapi.api.service;
 
-import com.github.maikoncarlos.libraryapi.api.entity.Book;
+import com.github.maikoncarlos.libraryapi.api.entity.BookEntity;
 
 import java.util.Optional;
 
 public interface BookService {
 
-    Book save(Book book);
+    BookEntity save(BookEntity book);
 
-    Optional<Book> getById(Long id);
+    Optional<BookEntity> getById(Long id);
 }
