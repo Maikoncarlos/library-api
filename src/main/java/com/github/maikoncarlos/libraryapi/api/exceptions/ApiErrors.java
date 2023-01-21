@@ -5,6 +5,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ApiErrors {
@@ -16,7 +17,7 @@ public class ApiErrors {
     }
 
     public ApiErrors(BusinessException ex) {
-        this.errors = Arrays.asList(ex.getMessage());
+        this.errors = Collections.singletonList(ex.getMessage());
     }
 
     public List<String> getErrors(){
