@@ -23,16 +23,18 @@ class BookRepositoryTest {
     @Autowired
     BookRepository repository;
 
+    static String ISBN = "isbn";
+
     @Test
     @DisplayName("deve retornar verdadeiro quando existir um livro com o isbn informado na requisição")
     void returnTrueWhenIsbnExists() {
+
         //cenário
-        String isbn = "isbn";
-        BookEntity book = BookEntity.builder().title("title").author("author").isbn(isbn).build();
+        BookEntity book = BookEntity.builder().title("title").author("author").isbn(ISBN).build();
         testEntityManager.persist(book);
 
         //execução
-        boolean exists = repository.existsByIsbn(isbn);
+        boolean exists = repository.existsByIsbn(ISBN);
 
         //verificações
         assertThat(exists).isTrue();
@@ -42,7 +44,7 @@ class BookRepositoryTest {
     @DisplayName("deve retornar falso quando não existir um livro com o isbn informado na requisição")
     void returnFalseWhenIsbnExist() {
         //cenário
-        String isbn = "isbn";
+        String isbn = ISBN;
 
         //execução
         boolean exists = repository.existsByIsbn(isbn);
