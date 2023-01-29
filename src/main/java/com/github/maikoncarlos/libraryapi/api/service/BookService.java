@@ -8,5 +8,7 @@ public interface BookService {
 
     BookEntity save(BookEntity book);
 
-    Optional<BookEntity> getById(Long id);
+    Optional<BookEntity> findById(Long id);
+
+    void delete(BookEntity book);
 }

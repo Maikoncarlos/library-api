@@ -5,9 +5,6 @@ import com.github.maikoncarlos.libraryapi.api.entity.BookEntity;
 import com.github.maikoncarlos.libraryapi.api.exceptions.ApiErrors;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
-
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/api/books/")
 public class BookController {
     @Autowired
     private BookService bookService;
@@ -35,13 +31,20 @@ public class BookController {
         return modelMapper.map(book, BookDto.class);
     }
 
-    @GetMapping("/{id}")
-    public BookDto getById(@PathVariable Long id){
-       return bookService.getById(id)
+    @GetMapping("{id}")
+    public BookDto findById(@PathVariable Long id){
+       return bookService.findById(id)
                .map(book -> modelMapper.map(book, BookDto.class))
                .orElseThrow( ()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){
+        BookEntity bookEntity = bookService.findById(id)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        bookService.delete(bookEntity);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

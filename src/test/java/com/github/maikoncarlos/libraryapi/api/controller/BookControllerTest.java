@@ -36,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class BookControllerTest {
 
-    static String BOOK_API = "/api/books";
+    static String BOOK_API = "/api/books/";
+    static String BOOK_API_ID = "/api/books/1";
     static Long ID = 1L;
     static String TITLE = "title";
     static String AUTHOR = "author";
@@ -48,15 +49,11 @@ class BookControllerTest {
     BookService service;
     @MockBean
     ModelMapper modelMapper;
-
-    private BookEntity book;
-    private BookDto bookDto;
-
     @Test
     @DisplayName("deve criar um livro com sucesso")
     void createBookWithSucessTest() throws Exception {
 
-        given(service.save(any())).willReturn(responseSaveBook());
+        given(service.save(any())).willReturn(createNewBook());
         String json = new ObjectMapper().writeValueAsString(requestBookDTO());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -69,10 +66,10 @@ class BookControllerTest {
                 .perform(request)
                 .andExpect(status().isCreated());
 
-        assertEquals(ID, responseSaveBook().getId());
-        assertEquals(TITLE, responseSaveBook().getTitle());
-        assertEquals(AUTHOR, responseSaveBook().getAuthor());
-        assertEquals(ISBN, responseSaveBook().getIsbn());
+        assertEquals(ID, 1L);
+        assertEquals(TITLE, createNewBook().getTitle());
+        assertEquals(AUTHOR, createNewBook().getAuthor());
+        assertEquals(ISBN, createNewBook().getIsbn());
 
 
     }
@@ -103,7 +100,7 @@ class BookControllerTest {
         String json = new ObjectMapper().writeValueAsString(requestBookDTO());
 
         String messageError = "Isbn já existente";
-        given(service.save(responseSaveBook()))
+        given(service.save(createNewBook()))
                 .willThrow(new BusinessException(messageError));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -121,24 +118,28 @@ class BookControllerTest {
     @Test
     @DisplayName("deve retornar informações do livro do id informado")
     void getBookDetailsTest() throws Exception {
+
         //cenário(given)
-        Long id = 1L;
+        Long id = 1l;
+
         BookEntity book = BookEntity.builder()
                 .id(id)
-                .isbn(createNewBook().getIsbn())
                 .title(createNewBook().getTitle())
-                .author(createNewBook().getAuthor()).build();
+                .author(createNewBook().getAuthor())
+                .isbn(createNewBook().getIsbn())
+                .build();
 
-        given(service.getById(anyLong())).willReturn(Optional.of(book));
+        given(service.findById(ID)).willReturn(Optional.of(book));
+
         //execução(when)
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get("/api/books/1")
+                .get(BOOK_API_ID)
                 .accept(MediaType.APPLICATION_JSON);
 
         //verificações()
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("id").value(ID))
                 .andExpect(jsonPath("isbn").value(createNewBook().getIsbn()))
                 .andExpect(jsonPath("title").value(createNewBook().getTitle()))
                 .andExpect(jsonPath("author").value(createNewBook().getAuthor()))
@@ -149,23 +150,49 @@ class BookControllerTest {
     @DisplayName("deve retornar not found quando o livro procurado não existir")
     void returnBookNotFoundTest() throws Exception {
 
-        given(service.getById(anyLong())).willReturn(Optional.empty());
+        given(service.findById(anyLong())).willReturn(Optional.empty());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(BOOK_API.concat("/" + 2))
+                .get(BOOK_API_ID)
                 .accept(MediaType.APPLICATION_JSON);
 
         //verificações()
-        mockMvc
-                .perform(request)
+        mockMvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("deve deletar o livro do Id passado")
+    void deleteBookTest() throws Exception {
+
+        given(service.findById(anyLong())).willReturn(Optional.of(BookEntity.builder().id(ID).build()));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(BOOK_API_ID);
+
+        //verificações()
+        mockMvc.perform(request)
+                .andExpect(status().isNoContent());
+    }
+@Test
+    @DisplayName("deve retornar erro quando tentar deletar o livro do Id passado")
+    void deleteInesxistentBookTest() throws Exception {
+
+        given(service.findById(anyLong())).willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(BOOK_API_ID);
+
+        //verificações()
+        mockMvc.perform(request)
                 .andExpect(status().isNotFound());
     }
 
     private BookDto requestBookDTO() {
         return BookDto.builder()
-                .title("title")
-                .author("author")
-                .isbn("isbn").build();
+                .title(TITLE)
+                .author(AUTHOR)
+                .isbn(ISBN).build();
     }
 
     private BookDto createNewBookDTOWithInvalidsValues() {
@@ -174,14 +201,6 @@ class BookControllerTest {
 
     private BookEntity createNewBook() {
         return BookEntity.builder()
-                .title("title")
-                .author("author")
-                .isbn("isbn").build();
-    }
-
-    private BookEntity responseSaveBook() {
-        return BookEntity.builder()
-                .id(ID)
                 .title(TITLE)
                 .author(AUTHOR)
                 .isbn(ISBN).build();
