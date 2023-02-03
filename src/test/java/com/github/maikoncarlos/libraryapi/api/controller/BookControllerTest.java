@@ -13,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -36,6 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class BookControllerTest {
 
+    static String AUTHOR_UPDATE = "author update";
+    static String TITLE_UPDATE = "title update";
     static String BOOK_API = "/api/books/";
     static String BOOK_API_ID = "/api/books/1";
     static Long ID = 1L;
@@ -173,13 +177,28 @@ class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk());
 
+                assertEquals(TITLE_UPDATE, createUpdateBook().getTitle());
+                assertEquals(AUTHOR_UPDATE, createUpdateBook().getAuthor());
+                assertEquals(ISBN, createNewBook().getIsbn());
     }
 
 
     @Test
-    @DisplayName("deve retornar erro quando tentar atualizar livro")
+    @DisplayName("deve retornar erro quando tentar atualizar um livro que não existe")
     void updateErrorBookTest() throws Exception{
 
+        String json = new ObjectMapper().writeValueAsString(requestBookDTO());
+
+        given(service.findById(anyLong())).willThrow( new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(BOOK_API_ID)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isNotFound());
     }
 
     private BookDto requestBookDTO() {
@@ -204,8 +223,8 @@ class BookControllerTest {
     private BookEntity createUpdateBook() {
         return BookEntity.builder()
                 .id(1L)
-                .title("title update")
-                .author("author update")
+                .title(TITLE_UPDATE)
+                .author(AUTHOR_UPDATE)
                 .isbn("isbn").build();
     }
 
