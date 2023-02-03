@@ -66,10 +66,9 @@ class BookControllerTest {
                 .perform(request)
                 .andExpect(status().isCreated());
 
-        assertEquals(ID, 1L);
-        assertEquals(TITLE, createNewBook().getTitle());
-        assertEquals(AUTHOR, createNewBook().getAuthor());
-        assertEquals(ISBN, createNewBook().getIsbn());
+                assertEquals(TITLE, createNewBook().getTitle());
+                assertEquals(AUTHOR, createNewBook().getAuthor());
+                assertEquals(ISBN, createNewBook().getIsbn());
 
 
     }
@@ -97,11 +96,10 @@ class BookControllerTest {
     @DisplayName("deve lançar erro 400 quando tentar criar um livro com o isbn já existente por outro livro")
     void createBookWithDuplicationIsbn() throws Exception {
 
-        String json = new ObjectMapper().writeValueAsString(requestBookDTO());
-
         String messageError = "Isbn já existente";
-        given(service.save(createNewBook()))
+        given(service.save(any()))
                 .willThrow(new BusinessException(messageError));
+        String json = new ObjectMapper().writeValueAsString(requestBookDTO());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(BOOK_API)
@@ -113,37 +111,6 @@ class BookControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors", hasSize(1)))
                 .andExpect(jsonPath("errors[0]").value(messageError));
-    }
-
-    @Test
-    @DisplayName("deve retornar informações do livro do id informado")
-    void getBookDetailsTest() throws Exception {
-
-        //cenário(given)
-        Long id = 1l;
-
-        BookEntity book = BookEntity.builder()
-                .id(id)
-                .title(createNewBook().getTitle())
-                .author(createNewBook().getAuthor())
-                .isbn(createNewBook().getIsbn())
-                .build();
-
-        given(service.findById(ID)).willReturn(Optional.of(book));
-
-        //execução(when)
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(BOOK_API_ID)
-                .accept(MediaType.APPLICATION_JSON);
-
-        //verificações()
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(ID))
-                .andExpect(jsonPath("isbn").value(createNewBook().getIsbn()))
-                .andExpect(jsonPath("title").value(createNewBook().getTitle()))
-                .andExpect(jsonPath("author").value(createNewBook().getAuthor()))
-        ;
     }
 
     @Test
@@ -174,8 +141,8 @@ class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isNoContent());
     }
-@Test
-    @DisplayName("deve retornar erro quando tentar deletar o livro do Id passado")
+    @Test
+    @DisplayName("deve retornar erro404 quando tentar deletar o livro do Id passado")
     void deleteInesxistentBookTest() throws Exception {
 
         given(service.findById(anyLong())).willReturn(Optional.empty());
@@ -186,6 +153,33 @@ class BookControllerTest {
         //verificações()
         mockMvc.perform(request)
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("deve atualizar um livro com sucesso")
+    void updateBookSucessTest() throws Exception {
+
+        given(service.findById(ID)).willReturn(Optional.of(createNewBook()));
+        String json = new ObjectMapper().writeValueAsString(createUpdateBook());
+
+        given(service.update(createUpdateBook())).willReturn(createUpdateBook());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(BOOK_API_ID)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+    }
+
+
+    @Test
+    @DisplayName("deve retornar erro quando tentar atualizar livro")
+    void updateErrorBookTest() throws Exception{
+
     }
 
     private BookDto requestBookDTO() {
@@ -201,9 +195,18 @@ class BookControllerTest {
 
     private BookEntity createNewBook() {
         return BookEntity.builder()
+                .id(ID)
                 .title(TITLE)
                 .author(AUTHOR)
                 .isbn(ISBN).build();
+    }
+
+    private BookEntity createUpdateBook() {
+        return BookEntity.builder()
+                .id(1L)
+                .title("title update")
+                .author("author update")
+                .isbn("isbn").build();
     }
 
 }

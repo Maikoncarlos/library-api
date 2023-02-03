@@ -37,5 +37,10 @@ public class BookServiceImpl implements BookService {
         repository.delete(book);
     }
 
+    @Override
+    public BookEntity update(BookEntity book) {
+        return repository.save(book);
+    }
+
 
 }

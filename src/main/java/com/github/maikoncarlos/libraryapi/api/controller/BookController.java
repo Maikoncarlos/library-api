@@ -26,16 +26,15 @@ public class BookController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto creater(@RequestBody @Valid BookDto bookDTO) {
-        BookEntity book = modelMapper.map(bookDTO, BookEntity.class);
-        book = bookService.save(book);
-        return modelMapper.map(book, BookDto.class);
+        BookEntity entity = modelMapper.map(bookDTO, BookEntity.class);
+        return modelMapper.map(bookService.save(entity), BookDto.class);
     }
 
     @GetMapping("{id}")
     public BookDto findById(@PathVariable Long id){
-       return bookService.findById(id)
-               .map(book -> modelMapper.map(book, BookDto.class))
-               .orElseThrow( ()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        BookEntity entity = bookService.findById(id)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return modelMapper.map(entity, BookDto.class);
     }
 
     @DeleteMapping("{id}")
@@ -44,6 +43,14 @@ public class BookController {
         BookEntity bookEntity = bookService.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         bookService.delete(bookEntity);
+    }
+
+    @PutMapping("{id}")
+    public BookDto update(@PathVariable Long id, @RequestBody BookDto bookDTO){
+       bookService.findById(id)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        BookEntity entity = modelMapper.map(bookDTO, BookEntity.class);
+      return modelMapper.map( bookService.update(entity), BookDto.class);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

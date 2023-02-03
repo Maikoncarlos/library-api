@@ -43,11 +43,8 @@ class BookRepositoryTest {
     @Test
     @DisplayName("deve retornar falso quando não existir um livro com o isbn informado na requisição")
     void returnFalseWhenIsbnExist() {
-        //cenário
-        String isbn = ISBN;
-
         //execução
-        boolean exists = repository.existsByIsbn(isbn);
+        boolean exists = repository.existsByIsbn(ISBN);
 
         //verificações
         assertThat(exists).isFalse();
