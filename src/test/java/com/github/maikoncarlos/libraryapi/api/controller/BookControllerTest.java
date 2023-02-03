@@ -1,7 +1,7 @@
 package com.github.maikoncarlos.libraryapi.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.maikoncarlos.libraryapi.api.dto.BookDto;
+import com.github.maikoncarlos.libraryapi.api.dto.BookRequestDto;
 import com.github.maikoncarlos.libraryapi.api.entity.BookEntity;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
@@ -164,9 +164,9 @@ class BookControllerTest {
     void updateBookSucessTest() throws Exception {
 
         given(service.findById(ID)).willReturn(Optional.of(createNewBook()));
-        String json = new ObjectMapper().writeValueAsString(createUpdateBook());
+        String json = new ObjectMapper().writeValueAsString(updateBookRequestDTO());
 
-        given(service.update(createUpdateBook())).willReturn(createUpdateBook());
+        given(service.update(updateBookEntityRequestDTO())).willReturn(createUpdateBook());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(BOOK_API_ID)
@@ -181,7 +181,6 @@ class BookControllerTest {
                 assertEquals(AUTHOR_UPDATE, createUpdateBook().getAuthor());
                 assertEquals(ISBN, createNewBook().getIsbn());
     }
-
 
     @Test
     @DisplayName("deve retornar erro quando tentar atualizar um livro que não existe")
@@ -201,15 +200,31 @@ class BookControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    private BookDto requestBookDTO() {
-        return BookDto.builder()
+    private BookRequestDto requestBookDTO() {
+        return BookRequestDto.builder()
                 .title(TITLE)
                 .author(AUTHOR)
                 .isbn(ISBN).build();
     }
 
-    private BookDto createNewBookDTOWithInvalidsValues() {
-        return BookDto.builder().build();
+    private BookRequestDto updateBookRequestDTO() {
+        return  BookRequestDto.builder()
+                .title(TITLE_UPDATE)
+                .author(AUTHOR_UPDATE)
+                .isbn(ISBN)
+                .build();
+    }
+
+    private BookEntity updateBookEntityRequestDTO() {
+        return  BookEntity.builder()
+                .title(TITLE_UPDATE)
+                .author(AUTHOR_UPDATE)
+                .isbn(ISBN)
+                .build();
+    }
+
+    private BookRequestDto createNewBookDTOWithInvalidsValues() {
+        return BookRequestDto.builder().build();
     }
 
     private BookEntity createNewBook() {
@@ -222,10 +237,11 @@ class BookControllerTest {
 
     private BookEntity createUpdateBook() {
         return BookEntity.builder()
-                .id(1L)
+                .id(ID)
                 .title(TITLE_UPDATE)
                 .author(AUTHOR_UPDATE)
-                .isbn("isbn").build();
+                .isbn(ISBN)
+                .build();
     }
 
 }
