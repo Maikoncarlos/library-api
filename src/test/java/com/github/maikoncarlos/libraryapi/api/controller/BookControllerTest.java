@@ -32,8 +32,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
+@ExtendWith (SpringExtension.class)
+@ActiveProfiles ("test")
 @WebMvcTest
 @AutoConfigureMockMvc
 class BookControllerTest {
@@ -53,8 +53,9 @@ class BookControllerTest {
     BookService service;
     @MockBean
     ModelMapper modelMapper;
+
     @Test
-    @DisplayName("deve criar um livro com sucesso")
+    @DisplayName ("deve criar um livro com sucesso")
     void createBookWithSucessTest() throws Exception {
 
         given(service.save(any())).willReturn(createNewBook());
@@ -70,15 +71,15 @@ class BookControllerTest {
                 .perform(request)
                 .andExpect(status().isCreated());
 
-                assertEquals(TITLE, createNewBook().getTitle());
-                assertEquals(AUTHOR, createNewBook().getAuthor());
-                assertEquals(ISBN, createNewBook().getIsbn());
+        assertEquals(TITLE, createNewBook().getTitle());
+        assertEquals(AUTHOR, createNewBook().getAuthor());
+        assertEquals(ISBN, createNewBook().getIsbn());
 
 
     }
 
     @Test
-    @DisplayName("deve lançar erro 400 ao tentar criar um livro por ter dados inválidos na requisição ou falta de dados obrigatórios")
+    @DisplayName ("deve lançar erro 400 ao tentar criar um livro por ter dados inválidos na requisição ou falta de dados obrigatórios")
     void invalidToCreateBookTest() throws Exception {
 
         String jsonDTO = new ObjectMapper().writeValueAsString(createNewBookDTOWithInvalidsValues());
@@ -97,7 +98,7 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("deve lançar erro 400 quando tentar criar um livro com o isbn já existente por outro livro")
+    @DisplayName ("deve lançar erro 400 quando tentar criar um livro com o isbn já existente por outro livro")
     void createBookWithDuplicationIsbn() throws Exception {
 
         String messageError = "Isbn já existente";
@@ -118,7 +119,27 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("deve retornar not found quando o livro procurado não existir")
+    @DisplayName ("deve retornar o livro por Id com sucesso")
+    void returnBookWithSucess() throws Exception {
+
+        given(service.findById(ID)).willReturn(Optional.ofNullable(createNewBook()));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(BOOK_API_ID)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+        assertEquals(ID, createNewBook().getId());
+        assertEquals(TITLE, createNewBook().getTitle());
+        assertEquals(AUTHOR, createNewBook().getAuthor());
+        assertEquals(ISBN, createNewBook().getIsbn());
+
+    }
+
+    @Test
+    @DisplayName ("deve retornar not found quando o livro procurado por Id não existir")
     void returnBookNotFoundTest() throws Exception {
 
         given(service.findById(anyLong())).willReturn(Optional.empty());
@@ -133,7 +154,7 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("deve deletar o livro do Id passado")
+    @DisplayName ("deve deletar o livro do Id passado")
     void deleteBookTest() throws Exception {
 
         given(service.findById(anyLong())).willReturn(Optional.of(BookEntity.builder().id(ID).build()));
@@ -145,8 +166,9 @@ class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isNoContent());
     }
+
     @Test
-    @DisplayName("deve retornar erro404 quando tentar deletar o livro do Id passado")
+    @DisplayName ("deve retornar erro404 quando tentar deletar o livro do Id passado")
     void deleteInesxistentBookTest() throws Exception {
 
         given(service.findById(anyLong())).willReturn(Optional.empty());
@@ -160,7 +182,7 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("deve atualizar um livro com sucesso")
+    @DisplayName ("deve atualizar um livro com sucesso")
     void updateBookSucessTest() throws Exception {
 
         given(service.findById(ID)).willReturn(Optional.of(createNewBook()));
@@ -177,18 +199,18 @@ class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk());
 
-                assertEquals(TITLE_UPDATE, createUpdateBook().getTitle());
-                assertEquals(AUTHOR_UPDATE, createUpdateBook().getAuthor());
-                assertEquals(ISBN, createNewBook().getIsbn());
+        assertEquals(TITLE_UPDATE, createUpdateBook().getTitle());
+        assertEquals(AUTHOR_UPDATE, createUpdateBook().getAuthor());
+        assertEquals(ISBN, createNewBook().getIsbn());
     }
 
     @Test
-    @DisplayName("deve retornar erro quando tentar atualizar um livro que não existe")
-    void updateErrorBookTest() throws Exception{
+    @DisplayName ("deve retornar erro quando tentar atualizar um livro que não existe")
+    void updateErrorBookTest() throws Exception {
 
         String json = new ObjectMapper().writeValueAsString(requestBookDTO());
 
-        given(service.findById(anyLong())).willThrow( new ResponseStatusException(HttpStatus.NOT_FOUND));
+        given(service.findById(anyLong())).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(BOOK_API_ID)
@@ -208,7 +230,7 @@ class BookControllerTest {
     }
 
     private BookRequestDto updateBookRequestDTO() {
-        return  BookRequestDto.builder()
+        return BookRequestDto.builder()
                 .title(TITLE_UPDATE)
                 .author(AUTHOR_UPDATE)
                 .isbn(ISBN)
@@ -216,7 +238,7 @@ class BookControllerTest {
     }
 
     private BookEntity updateBookEntityRequestDTO() {
-        return  BookEntity.builder()
+        return BookEntity.builder()
                 .title(TITLE_UPDATE)
                 .author(AUTHOR_UPDATE)
                 .isbn(ISBN)
