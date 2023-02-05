@@ -64,6 +64,36 @@ class BookRepositoryTest {
         assertThat(optBookEntity.isPresent()).isTrue();
     }
 
+    @Test
+    @DisplayName("deve salvar livro com sucesso")
+    void salvedBookWithSucessTest(){
+
+        BookEntity entity = bookEntity();
+        testEntityManager.persist(entity);
+
+        BookEntity entitySalved = repository.save(entity);
+
+        assertThat(entitySalved).isNotNull();
+        assertThat(entitySalved.getId()).isEqualTo(entity.getId());
+        assertThat(entitySalved.getTitle()).isEqualTo(entity.getTitle());
+        assertThat(entitySalved.getAuthor()).isEqualTo(entity.getAuthor());
+        assertThat(entitySalved.getIsbn()).isEqualTo(entity.getIsbn());
+    }
+
+    @Test
+    @DisplayName("deve salvar livro com sucesso")
+    void deletedBookWithSucessTest(){
+
+        BookEntity entity = bookEntity();
+        testEntityManager.persist(entity);
+        BookEntity entitySalved = testEntityManager.find(BookEntity.class, entity.getId());
+
+        repository.delete(entitySalved);
+
+        BookEntity bookDeleted = testEntityManager.find(BookEntity.class, entity.getId());
+        assertThat(bookDeleted).isNull();
+    }
+
     private BookEntity bookEntity() {
        return BookEntity.builder()
                 .title(TITLE)

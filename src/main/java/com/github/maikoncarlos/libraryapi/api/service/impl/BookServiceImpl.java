@@ -5,13 +5,11 @@ import com.github.maikoncarlos.libraryapi.api.repositories.BookRepository;
 import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
