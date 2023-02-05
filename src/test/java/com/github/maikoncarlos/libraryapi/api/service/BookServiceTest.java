@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -20,6 +22,10 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles ("test")
 class BookServiceTest {
 
+    static String ISBN = "isbn";
+    static String AUTHOR = "author";
+    static String TITLE = "title";
+    static Long ID = 1L;
     BookService service;
 
     @MockBean
@@ -68,11 +74,48 @@ class BookServiceTest {
         verify(repository, never()).save(book);
     }
 
+    @Test
+    @DisplayName("deve obter livro pelo Id enviado")
+    void getBookByIdSucessTest(){
+
+        when(repository.findById(ID)).thenReturn(Optional.of(newBookEntity()));
+
+        Optional<BookEntity> optBook = service.findById(ID);
+
+        assertThat(optBook.isPresent()).isTrue();
+        assertThat(optBook.get().getId()).isEqualTo(newBookEntity().getId());
+        assertThat(optBook.get().getTitle()).isEqualTo(newBookEntity().getTitle());
+        assertThat(optBook.get().getAuthor()).isEqualTo(newBookEntity().getAuthor());
+        assertThat(optBook.get().getIsbn()).isEqualTo(newBookEntity().getIsbn());
+
+    }
+
+    @Test
+    @DisplayName("deve devolver vazio por não ter livro com o Id enviado")
+    void getBookByIdEmptyTest(){
+
+        when(repository.findById(ID)).thenReturn(Optional.empty());
+
+        Optional<BookEntity> bookEmpty = service.findById(ID);
+
+        assertThat(bookEmpty.isPresent()).isFalse();
+
+    }
+
     private static BookEntity bookEntity() {
-        return BookEntity.builder().title("title").author("author").isbn("isbn").build();
+        return BookEntity.builder()
+                .title(TITLE)
+                .author(AUTHOR)
+                .isbn(ISBN)
+                .build();
     }
 
     private static BookEntity newBookEntity() {
-        return BookEntity.builder().id(1L).author("author").title("title").isbn("isbn").build();
+        return BookEntity.builder()
+                .id(ID)
+                .title(TITLE)
+                .author(AUTHOR)
+                .isbn(ISBN)
+                .build();
     }
 }
