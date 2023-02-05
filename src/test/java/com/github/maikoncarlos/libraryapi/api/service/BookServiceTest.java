@@ -15,7 +15,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith (SpringExtension.class)
@@ -102,6 +103,62 @@ class BookServiceTest {
 
     }
 
+    @Test
+    @DisplayName("deve deletar um livro com sucesso ")
+    void deleteBookSucessTest(){
+
+        BookEntity entity = newBookEntity();
+
+        assertDoesNotThrow(() -> service.delete(entity));
+
+        verify(repository, times(1)).delete(entity);
+
+    }
+
+    @Test
+    @DisplayName("deve devolver erro quando tentar deletar livro inexistente ")
+    void deleteErrorBookTest(){
+
+        BookEntity entity = BookEntity.builder().build();
+
+        assertThrows(IllegalArgumentException.class,() -> service.delete(entity));
+
+        verify(repository, never()).delete(entity);
+
+    }
+
+    @Test
+    @DisplayName("deve update um livro com sucesso ")
+    void updateBookSucessTest(){
+
+        BookEntity updateEntity = updateBookEntity();
+
+        when(repository.save(updateEntity)).thenReturn(updateEntity);
+
+        BookEntity book = assertDoesNotThrow(() -> service.update(updateEntity));
+
+        verify(repository, times(1)).save(updateEntity);
+
+        assertThat(book.getId()).isEqualTo(updateEntity.getId());
+        assertThat(book.getTitle()).isEqualTo(updateEntity.getTitle());
+        assertThat(book.getAuthor()).isEqualTo(updateEntity.getAuthor());
+        assertThat(book.getIsbn()).isEqualTo(updateEntity.getIsbn());
+
+    }
+
+    @Test
+    @DisplayName("deve devolver erro quando tentar update livro inexistente ")
+    void updateErrorBookTest(){
+
+        BookEntity entity = BookEntity.builder().build();
+
+        assertThrows(IllegalArgumentException.class,() -> service.update(entity));
+
+        verify(repository, never()).save(entity);
+
+    }
+
+
     private static BookEntity bookEntity() {
         return BookEntity.builder()
                 .title(TITLE)
@@ -115,6 +172,15 @@ class BookServiceTest {
                 .id(ID)
                 .title(TITLE)
                 .author(AUTHOR)
+                .isbn(ISBN)
+                .build();
+    }
+
+    private static BookEntity updateBookEntity() {
+        return BookEntity.builder()
+                .id(ID)
+                .title("titulo update")
+                .author("author update")
                 .isbn(ISBN)
                 .build();
     }
