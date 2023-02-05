@@ -10,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
@@ -22,7 +24,8 @@ class BookRepositoryTest {
 
     @Autowired
     BookRepository repository;
-
+    static String TITLE = "title";
+    static String AUTHOR = "author";
     static String ISBN = "isbn";
 
     @Test
@@ -30,8 +33,7 @@ class BookRepositoryTest {
     void returnTrueWhenIsbnExists() {
 
         //cenário
-        BookEntity book = BookEntity.builder().title("title").author("author").isbn(ISBN).build();
-        testEntityManager.persist(book);
+        testEntityManager.persist( bookEntity() );
 
         //execução
         boolean exists = repository.existsByIsbn(ISBN);
@@ -48,6 +50,26 @@ class BookRepositoryTest {
 
         //verificações
         assertThat(exists).isFalse();
+    }
+
+    @Test
+    @DisplayName("deve obter um o livro por Id com sucesso")
+    void getBookByIdSucessTest(){
+
+        BookEntity entity = bookEntity();
+        testEntityManager.persist(entity);
+
+        Optional<BookEntity> optBookEntity = repository.findById(entity.getId());
+
+        assertThat(optBookEntity.isPresent()).isTrue();
+    }
+
+    private BookEntity bookEntity() {
+       return BookEntity.builder()
+                .title(TITLE)
+                .author(AUTHOR)
+                .isbn(ISBN)
+                .build();
     }
 
 }
