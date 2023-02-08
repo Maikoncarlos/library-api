@@ -6,6 +6,7 @@ import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -44,6 +45,11 @@ public class BookServiceImpl implements BookService {
             throw new IllegalArgumentException(" Book id cant be null! ");
         }
         return repository.save(book);
+    }
+
+    @Override
+    public Page<BookEntity> find(BookEntity book) {
+        return null;
     }
 
 
