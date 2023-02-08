@@ -71,10 +71,9 @@ class BookControllerTest {
                 .perform(request)
                 .andExpect(status().isCreated());
 
-        assertEquals(TITLE, createNewBook().getTitle());
-        assertEquals(AUTHOR, createNewBook().getAuthor());
-        assertEquals(ISBN, createNewBook().getIsbn());
-
+                assertEquals(TITLE, createNewBook().getTitle());
+                assertEquals(AUTHOR, createNewBook().getAuthor());
+                assertEquals(ISBN, createNewBook().getIsbn());
 
     }
 
@@ -131,10 +130,10 @@ class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk());
 
-        assertEquals(ID, createNewBook().getId());
-        assertEquals(TITLE, createNewBook().getTitle());
-        assertEquals(AUTHOR, createNewBook().getAuthor());
-        assertEquals(ISBN, createNewBook().getIsbn());
+                assertEquals(ID, createNewBook().getId());
+                assertEquals(TITLE, createNewBook().getTitle());
+                assertEquals(AUTHOR, createNewBook().getAuthor());
+                assertEquals(ISBN, createNewBook().getIsbn());
 
     }
 
@@ -199,9 +198,9 @@ class BookControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk());
 
-        assertEquals(TITLE_UPDATE, createUpdateBook().getTitle());
-        assertEquals(AUTHOR_UPDATE, createUpdateBook().getAuthor());
-        assertEquals(ISBN, createNewBook().getIsbn());
+                assertEquals(TITLE_UPDATE, createUpdateBook().getTitle());
+                assertEquals(AUTHOR_UPDATE, createUpdateBook().getAuthor());
+                assertEquals(ISBN, createNewBook().getIsbn());
     }
 
     @Test

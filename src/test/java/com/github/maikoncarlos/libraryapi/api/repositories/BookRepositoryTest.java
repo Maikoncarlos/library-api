@@ -65,7 +65,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("deve salvar livro com sucesso")
+    @DisplayName("deve salvar um livro com sucesso")
     void salvedBookWithSucessTest(){
 
         BookEntity entity = bookEntity();
@@ -81,7 +81,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("deve salvar livro com sucesso")
+    @DisplayName("deve deletar um livro com sucesso")
     void deletedBookWithSucessTest(){
 
         BookEntity entity = bookEntity();
