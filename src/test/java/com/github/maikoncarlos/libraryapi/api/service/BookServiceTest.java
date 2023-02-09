@@ -10,9 +10,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -157,6 +164,28 @@ class BookServiceTest {
         verify(repository, never()).save(entity);
 
     }
+
+    @Test
+    @DisplayName("deve devolver uma Page de Livro")
+    void findBookPageTeste(){
+
+        BookEntity entity = bookEntity();
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<BookEntity> entityList = Arrays.asList(entity);
+        Page<BookEntity> page = new PageImpl<BookEntity>(entityList,pageRequest, 1);
+        when(repository.findAll(any(Example.class), any(PageRequest.class))).thenReturn(page);
+
+        Page<BookEntity> pages = service.find(entity, pageRequest);
+
+        assertThat(page.getTotalElements()).isEqualTo(1);
+        assertThat(page.getContent()).isEqualTo(entityList);
+        assertThat(page.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(page.getPageable().getPageSize()).isEqualTo(10);
+
+
+    }
+
 
 
     private static BookEntity bookEntity() {

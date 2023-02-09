@@ -6,7 +6,10 @@ import com.github.maikoncarlos.libraryapi.api.service.BookService;
 import com.github.maikoncarlos.libraryapi.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -48,8 +51,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookEntity> find(BookEntity book) {
-        return null;
+    public Page<BookEntity> find(BookEntity book, Pageable pageable) {
+        Example<BookEntity> exampe = Example.of(book,
+                ExampleMatcher
+                        .matching()
+                        .withIgnoreCase()
+                        .withIgnoreNullValues()
+                        .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
+        return repository.findAll(exampe, pageable);
     }
 
 
