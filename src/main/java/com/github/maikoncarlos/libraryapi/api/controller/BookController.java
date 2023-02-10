@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 @RequestMapping ("/api/books/")
 public class BookController {
     @Autowired
-    BookService bookService;
+    private BookService bookService;
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @PostMapping
     @ResponseStatus (HttpStatus.CREATED)
@@ -62,7 +62,7 @@ public class BookController {
     @GetMapping()
     public Page<BookResponseDto> find(BookRequestDto requestDto, Pageable pageable){
         BookEntity book = modelMapper.map(requestDto, BookEntity.class);
-        Page<BookEntity> resultPage = bookService.find( book,pageable );
+        Page<BookEntity> resultPage = bookService.find( book, pageable );
         List<BookResponseDto> list = resultPage.getContent()
                 .stream()
                 .map( pageResult -> modelMapper.map(pageResult, BookResponseDto.class))

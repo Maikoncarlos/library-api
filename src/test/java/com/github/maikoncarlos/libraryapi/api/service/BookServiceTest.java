@@ -104,7 +104,7 @@ class BookServiceTest {
 
         when(repository.findById(ID)).thenReturn(Optional.empty());
 
-        Optional<BookEntity> bookEmpty = service.findById(ID);
+        Optional<BookEntity> bookEmpty = service.findById(anyLong());
 
         assertThat(bookEmpty.isPresent()).isFalse();
 

@@ -9,12 +9,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
-@Builder
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
-@Table
 public class BookEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -29,5 +29,6 @@ public class BookEntity implements Serializable {
     private String author;
 
     @NotBlank(message = "valor inválido ou em branco")
+    @Column(unique = true)
     private String isbn;
 }
